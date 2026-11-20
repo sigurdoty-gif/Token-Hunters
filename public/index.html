@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pirate Token Treasure Hunters!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Luckiest+Guy&family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --night: #071426;
+  --deep: #0c2440;
+  --sea: #123a5e;
+  --plank: #3a2412;
+  --plank-light: #5a3a1e;
+  --gold: #ffc93c;
+  --gold-hot: #ffe27a;
+  --gold-dark: #b8770b;
+  --parchment: #f5e6c4;
+  --ink: #2a1606;
+  --storm-blue: #2fd3ff;
+  --rare-purple: #b15cff;
+  --green: #4ade80;
+  --red: #ff6b6b;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Nunito", Arial, Helvetica, sans-serif;
+  color: #fff;
+  background:
+    radial-gradient(ellipse at 50% -10%, rgba(255, 201, 60, 0.22), transparent 55%),
+    radial-gradient(ellipse at 10% 100%, rgba(47, 211, 255, 0.18), transparent 50%),
+    linear-gradient(180deg, #0b2a4a 0%, var(--night) 55%, #04101e 100%);
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(2px 2px at 12% 18%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(1.5px 1.5px at 72% 12%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(2px 2px at 88% 40%, rgba(255,255,255,0.5), transparent),
+    radial-gradient(1.5px 1.5px at 30% 60%, rgba(255,255,255,0.4), transparent),
+    radial-gradient(2px 2px at 55% 30%, rgba(255,255,255,0.5), transparent);
+  z-index: 0;
+}
+.waves {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  height: 120px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+main, header, footer { position: relative; z-index: 1; }
+
+/* ---------- Countdown clocks (top right) ---------- */
+.top-timers {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 50;
+  display: flex;
+  gap: 10px;
+}
+.timer-card {
+  min-width: 158px;
+  background: linear-gradient(180deg, var(--plank-light), var(--plank));
+  border: 3px solid var(--gold);
+  border-radius: 14px;
+  padding: 8px 14px 10px;
+  text-align: center;
+  box-shadow: 0 6px 0 #1c0f05, 0 10px 24px rgba(0,0,0,0.55);
+  transform: rotate(-1deg);
+}
+.timer-card:nth-child(2) { transform: rotate(1deg); }
+.timer-title {
+  font-family: "Luckiest Guy", "Arial Black", sans-serif;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: var(--gold-hot);
+  text-shadow: 0 2px 0 #000;
+}
+.timer-clock {
+  margin-top: 4px;
+  font-family: "Luckiest Guy", "Arial Black", sans-serif;
+  font-size: 22px;
+  letter-spacing: 1px;
+  color: #fff;
+  text-shadow: 0 2px 0 #000;
+  font-variant-numeric: tabular-nums;
+}
+.timer-clock.live { color: var(--green); animation: pulse 1s ease-in-out infinite; }
+.timer-sub {
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--parchment);
+  opacity: 0.85;
+}
+@keyframes pulse { 50% { opacity: 0.55; } }
+
+/* ---------- Header ---------- */
+header {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 120px 20px 20px;
+  text-align: center;
+}
+.coin-wrap {
+  width: 170px;
+  height: 170px;
+  margin: 0 auto 10px;
+  position: relative;
+  animation: bob 3.2s ease-in-out infinite;
+}
+.coin-wrap::after {
+  content: "";
+  position: absolute;
+  inset: -30px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 201, 60, 0.55), transparent 65%);
+  z-index: -1;
+  animation: glow 3.2s ease-in-out infinite;
+}
+.coin-wrap svg { width: 100%; height: 100%; filter: drop-shadow(0 10px 12px rgba(0,0,0,0.6)); }
+@keyframes bob { 50% { transform: translateY(-10px) rotate(4deg); } }
+@keyframes glow { 50% { opacity: 0.6; transform: scale(1.08); } }
+h1 {
+  margin: 0;
+  font-family: "Luckiest Guy", "Arial Black", Impact, sans-serif;
+  font-size: clamp(38px, 7vw, 76px);
+  line-height: 1;
+  letter-spacing: 2px;
+  color: var(--gold);
+  background: linear-gradient(180deg, #fff6c8 0%, var(--gold) 45%, var(--gold-dark) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 0 #3a1d00) drop-shadow(0 8px 12px rgba(0,0,0,0.5));
+}
+.sub1 {
+  margin: 14px 0 0;
+  font-family: "Pirata One", Georgia, serif;
+  font-size: clamp(30px, 4.5vw, 48px);
+  color: var(--storm-blue);
+  text-shadow: 0 3px 0 #04223a, 0 0 20px rgba(47, 211, 255, 0.45);
+}
+.sub2 {
+  max-width: 720px;
+  margin: 18px auto 0;
+  padding: 18px 26px;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.45;
+  color: var(--ink);
+  background: var(--parchment);
+  border-radius: 6px;
+  box-shadow: inset 0 0 40px rgba(140, 90, 30, 0.45), 0 10px 22px rgba(0,0,0,0.45);
+  transform: rotate(-0.6deg);
+  position: relative;
+}
+.sub2::before, .sub2::after {
+  content: "";
+  position: absolute;
+  top: -8px; bottom: -8px;
+  width: 22px;
+  background: linear-gradient(90deg, #8a5a22, #d9b277, #8a5a22);
+  border-radius: 12px;
+}
+.sub2::before { left: -12px; }
+.sub2::after { right: -12px; }
+
+.add-me {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 28px;
+  padding: 12px 14px 12px 24px;
+  background: linear-gradient(180deg, #3b2bd1, #23157a);
+  border: 3px solid var(--rare-purple);
+  border-radius: 999px;
+  box-shadow: 0 6px 0 #120a40, 0 0 24px rgba(177, 92, 255, 0.5);
+  font-family: "Luckiest Guy", "Arial Black", sans-serif;
+  font-size: 22px;
+  letter-spacing: 1px;
+}
+.add-me .label { color: var(--gold-hot); text-shadow: 0 2px 0 #000; }
+.add-me .tag { color: #fff; text-shadow: 0 2px 0 #000; }
+.btn {
+  font-family: "Luckiest Guy", "Arial Black", sans-serif;
+  letter-spacing: 1px;
+  border: none;
+  cursor: pointer;
+  color: var(--ink);
+  background: linear-gradient(180deg, var(--gold-hot), var(--gold) 55%, var(--gold-dark));
+  box-shadow: 0 4px 0 #7a4a05;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.15s;
+}
+.btn:hover { filter: brightness(1.08); }
+.btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #7a4a05; }
+.btn:disabled { filter: grayscale(0.8); cursor: not-allowed; }
+.copy-btn { padding: 8px 16px; border-radius: 999px; font-size: 15px; }
+
+/* ---------- Layout ---------- */
+main {
+  max-width: 1180px;
+  margin: 30px auto 0;
+  padding: 0 20px 140px;
+  display: grid;
+  grid-template-columns: minmax(300px, 380px) 1fr;
+  gap: 28px;
+  align-items: start;
+}
+.panel {
+  background: linear-gradient(180deg, rgba(18, 58, 94, 0.92), rgba(12, 36, 64, 0.95));
+  border: 3px solid var(--gold);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 10px 0 rgba(0,0,0,0.35), 0 18px 40px rgba(0,0,0,0.4);
+}
+.signup-panel { position: sticky; top: 110px; }
+.panel h2 {
+  margin: 0 0 18px;
+  font-family: "Pirata One", Georgia, serif;
+  font-size: 38px;
+  font-weight: 400;
+  color: var(--gold);
+  text-shadow: 0 3px 0 #000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.count-pill {
+  font-family: "Nunito", sans-serif;
+  font-size: 13px;
+  font-weight: 900;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.35);
+  color: var(--storm-blue);
+  border: 2px solid var(--storm-blue);
+  text-shadow: none;
+}
+.field { margin-bottom: 16px; }
+.field label.title {
+  display: block;
+  margin-bottom: 7px;
+  font-weight: 900;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--parchment);
+}
+.input, .select {
+  width: 100%;
+  padding: 12px 14px;
+  font: 800 16px "Nunito", Arial, sans-serif;
+  color: #fff;
+  background: rgba(4, 16, 30, 0.75);
+  border: 2px solid #2b5f8f;
+  border-radius: 10px;
+  outline: none;
+}
+.input:focus, .select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(255, 201, 60, 0.25); }
+.select option { background: var(--deep); }
+.mic-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  font-weight: 900;
+  font-size: 17px;
+  background: rgba(4, 16, 30, 0.75);
+  border: 2px solid #2b5f8f;
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+.mic-box input { width: 22px; height: 22px; accent-color: var(--gold); cursor: pointer; }
+.join-btn { width: 100%; padding: 15px; border-radius: 12px; font-size: 24px; margin-top: 4px; }
+.note { margin: 12px 0 0; font-size: 13px; line-height: 1.45; color: #b9cfe6; }
+.status {
+  margin-top: 14px;
+  padding: 0;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 15px;
+  line-height: 1.45;
+}
+.status:empty { display: none; }
+.status.ok { padding: 12px 14px; background: rgba(74, 222, 128, 0.14); border: 2px solid var(--green); }
+.status.err { padding: 12px 14px; background: rgba(255, 107, 107, 0.14); border: 2px solid var(--red); }
+.crew-code {
+  display: inline-block;
+  padding: 2px 10px;
+  margin: 0 2px;
+  border-radius: 6px;
+  background: var(--gold);
+  color: var(--ink);
+  font-family: "Luckiest Guy", monospace;
+  letter-spacing: 2px;
+}
+
+/* ---------- Squad list ---------- */
+.squad-tools {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: -4px 0 18px;
+}
+.squad-tools .select, .squad-tools .input { width: auto; flex: 1 1 160px; padding: 9px 12px; font-size: 14px; }
+.squads-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 18px;
+}
+.empty-state {
+  grid-column: 1 / -1;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--parchment);
+  font-weight: 800;
+  border: 2px dashed #2b5f8f;
+  border-radius: 14px;
+}
+.squad-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #0f2e4d, #081a2f);
+  border: 2px solid #2b5f8f;
+  box-shadow: 0 6px 0 rgba(0,0,0,0.35);
+  transition: transform 0.15s ease;
+}
+.squad-card:hover { transform: translateY(-3px); }
+.squad-card.mine { border-color: var(--storm-blue); box-shadow: 0 6px 0 rgba(0,0,0,0.35), 0 0 0 3px rgba(47, 211, 255, 0.25); }
+.squad-card.found {
+  border-color: var(--gold);
+  background: linear-gradient(180deg, #3e2a08, #1a1203);
+  box-shadow: 0 6px 0 rgba(0,0,0,0.35), 0 0 26px rgba(255, 201, 60, 0.45);
+}
+.squad-card.flash { animation: flash 1.4s ease 2; }
+@keyframes flash { 50% { box-shadow: 0 0 0 6px var(--storm-blue); } }
+.squad-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.squad-name {
+  margin: 0;
+  font-family: "Pirata One", Georgia, serif;
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--gold-hot);
+  text-shadow: 0 2px 0 #000;
+  word-break: break-word;
+}
+.squad-name.unnamed { color: #8fb1d3; font-size: 26px; }
+.squad-meta { margin-top: 6px; font-size: 13px; font-weight: 800; color: #9fc0e0; }
+.badge {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.badge.recruiting { background: rgba(47, 211, 255, 0.15); color: var(--storm-blue); border: 1px solid var(--storm-blue); }
+.badge.full { background: rgba(74, 222, 128, 0.15); color: var(--green); border: 1px solid var(--green); }
+.badge.you { background: var(--storm-blue); color: #03243a; }
+.found-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0 4px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, var(--gold-hot), var(--gold) 60%, var(--gold-dark));
+  color: var(--ink);
+  font-family: "Luckiest Guy", "Arial Black", sans-serif;
+  font-size: 24px;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 0 #7a4a05;
+  transform: rotate(-1.5deg);
+}
+.found-banner svg { width: 34px; height: 34px; flex-shrink: 0; }
+.found-banner small { display: block; font-family: "Nunito", sans-serif; font-size: 11px; font-weight: 900; letter-spacing: 0; }
+.proof {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 0;
+  border: 3px solid var(--gold);
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000;
+  cursor: zoom-in;
+}
+.proof img { display: block; width: 100%; height: 160px; object-fit: cover; }
+.members { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 6px; }
+.member {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  font-weight: 900;
+  font-size: 15px;
+}
+.member .who { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.member.open { background: none; border: 2px dashed rgba(143, 177, 211, 0.35); color: #6f8fb0; font-weight: 800; font-size: 13px; }
+.mic { flex-shrink: 0; font-size: 11px; font-weight: 900; padding: 2px 8px; border-radius: 6px; }
+.mic.yes { background: rgba(74, 222, 128, 0.15); color: var(--green); }
+.mic.no { background: rgba(255, 107, 107, 0.12); color: var(--red); }
+
+.crew-tools { margin-top: 14px; padding-top: 12px; border-top: 2px dashed rgba(255, 201, 60, 0.35); display: grid; gap: 10px; }
+.crew-tools .label { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; color: var(--parchment); }
+.row { display: flex; gap: 6px; }
+.row .input { padding: 8px 10px; font-size: 14px; }
+.row .btn { padding: 8px 12px; border-radius: 8px; font-size: 14px; white-space: nowrap; }
+.found-btn { width: 100%; padding: 11px; border-radius: 10px; font-size: 18px; }
+.hint { font-size: 12px; color: #9fc0e0; line-height: 1.4; }
+.mini-msg { font-size: 13px; font-weight: 800; }
+.mini-msg.err { color: var(--red); }
+.mini-msg.ok { color: var(--green); }
+.link-btn {
+  margin-top: 12px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #8fb1d3;
+  font: 800 12px "Nunito", sans-serif;
+  text-decoration: underline;
+  cursor: pointer;
+  align-self: flex-start;
+}
+.file-pick {
+  display: block;
+  padding: 10px;
+  text-align: center;
+  border: 2px dashed var(--storm-blue);
+  border-radius: 10px;
+  color: var(--storm-blue);
+  font-weight: 900;
+  font-size: 14px;
+  cursor: pointer;
+}
+.file-pick input { display: none; }
+.preview { width: 100%; max-height: 160px; object-fit: cover; border-radius: 8px; border: 2px solid var(--storm-blue); }
+
+/* ---------- Lightbox ---------- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  background: rgba(2, 8, 16, 0.88);
+  cursor: zoom-out;
+}
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 100%; max-height: 100%; border: 4px solid var(--gold); border-radius: 12px; }
+
+footer { text-align: center; padding: 0 20px 40px; color: #7d9cbc; font-size: 13px; font-weight: 700; }
+
+@media (max-width: 900px) {
+  main { grid-template-columns: 1fr; }
+  .signup-panel { position: static; }
+}
+@media (max-width: 640px) {
+  .top-timers { position: static; justify-content: center; padding: 12px 10px 0; }
+  .timer-card { min-width: 0; flex: 1; transform: none !important; }
+  .timer-clock { font-size: 18px; }
+  header { padding-top: 24px; }
+  .add-me { font-size: 17px; flex-wrap: wrap; justify-content: center; padding: 12px 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- Reusable pirate token drawing (gold coin with skull and crossbones) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <radialGradient id="coinFace" cx="38%" cy="32%" r="75%">
+      <stop offset="0%" stop-color="#fff6c2"/>
+      <stop offset="35%" stop-color="#ffd54a"/>
+      <stop offset="75%" stop-color="#e09a12"/>
+      <stop offset="100%" stop-color="#9a5a00"/>
+    </radialGradient>
+    <linearGradient id="coinRim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff0a0"/>
+      <stop offset="50%" stop-color="#c27a05"/>
+      <stop offset="100%" stop-color="#6e3c00"/>
+    </linearGradient>
+    <symbol id="pirateToken" viewBox="0 0 200 200">
+      <circle cx="100" cy="100" r="96" fill="url(#coinRim)"/>
+      <circle cx="100" cy="100" r="96" fill="none" stroke="#5a3000" stroke-width="4" stroke-dasharray="6 5"/>
+      <circle cx="100" cy="100" r="80" fill="url(#coinFace)" stroke="#8a4f00" stroke-width="4"/>
+      <circle cx="100" cy="100" r="70" fill="none" stroke="#b8770b" stroke-width="2" stroke-dasharray="2 6" stroke-linecap="round"/>
+      <!-- crossbones -->
+      <g stroke="#3a1d00" stroke-width="13" stroke-linecap="round">
+        <line x1="58" y1="128" x2="142" y2="168"/>
+        <line x1="142" y1="128" x2="58" y2="168"/>
+      </g>
+      <g stroke="#fff3cf" stroke-width="7" stroke-linecap="round">
+        <line x1="58" y1="128" x2="142" y2="168"/>
+        <line x1="142" y1="128" x2="58" y2="168"/>
+      </g>
+      <!-- skull -->
+      <path d="M100 46c-26 0-44 18-44 42 0 14 7 24 16 30v14c0 4 3 7 7 7h42c4 0 7-3 7-7v-14c9-6 16-16 16-30 0-24-18-42-44-42z" fill="#fff3cf" stroke="#3a1d00" stroke-width="5"/>
+      <ellipse cx="83" cy="92" rx="11" ry="12" fill="#3a1d00"/>
+      <ellipse cx="117" cy="92" rx="11" ry="12" fill="#3a1d00"/>
+      <path d="M100 104l-7 12h14z" fill="#3a1d00"/>
+      <g stroke="#3a1d00" stroke-width="3.5" stroke-linecap="round">
+        <line x1="88" y1="128" x2="88" y2="138"/>
+        <line x1="100" y1="128" x2="100" y2="139"/>
+        <line x1="112" y1="128" x2="112" y2="138"/>
+      </g>
+      <!-- bandana -->
+      <path d="M57 78c10-22 76-22 86 0-6-4-14-6-22-6H79c-8 0-16 2-22 6z" fill="#d6262e" stroke="#3a1d00" stroke-width="4" stroke-linejoin="round"/>
+      <circle cx="146" cy="70" r="6" fill="#d6262e" stroke="#3a1d00" stroke-width="3"/>
+      <!-- shine -->
+      <path d="M48 70a58 58 0 0 1 40-34" fill="none" stroke="#fffbe6" stroke-width="6" stroke-linecap="round" opacity="0.8"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ===== Countdown clocks (top right) ===== -->
+<div class="top-timers">
+  <div class="timer-card">
+    <div class="timer-title">Token Leaves In</div>
+    <div class="timer-clock" id="leavesClock">--:--:--</div>
+    <div class="timer-sub" id="leavesWhen"></div>
+  </div>
+  <div class="timer-card">
+    <div class="timer-title">Next Treasure Hour</div>
+    <div class="timer-clock" id="treasureClock">--:--:--</div>
+    <div class="timer-sub" id="treasureWhen"></div>
+  </div>
+</div>
+
+<header>
+  <div class="coin-wrap" aria-hidden="true"><svg><use href="#pirateToken"/></svg></div>
+  <h1>Pirate Token Treasure Hunters!</h1>
+  <div class="sub1">Join the Hunt</div>
+  <div class="sub2">Tired of squad-fill teammates that do not open chests efficiently? Join one of our squads!</div>
+  <div class="add-me">
+    <span class="label">Add Me!</span>
+    <span class="tag">FamiliarTray621</span>
+    <button type="button" class="btn copy-btn" id="copyBtn">Copy</button>
+  </div>
+</header>
+
+<main>
+  <!-- ===== Sign up ===== -->
+  <section class="panel signup-panel" aria-labelledby="signupTitle">
+    <h2 id="signupTitle">Sign Up</h2>
+    <form id="joinForm" autocomplete="off">
+      <div class="field">
+        <label class="title" for="username">Fortnite Username</label>
+        <input class="input" type="text" id="username" maxlength="32" placeholder="Type your username..." required>
+      </div>
+      <div class="field">
+        <label class="title" for="region">What region do you live in?</label>
+        <select class="select" id="region" required>
+          <option value="" disabled selected>Choose your region...</option>
+          <option value="NA-West">NA-West</option>
+          <option value="NA-Central">NA-Central</option>
+          <option value="NA-East">NA-East</option>
+          <option value="Europe">Europe</option>
+          <option value="Brazil">Brazil</option>
+          <option value="Asia">Asia</option>
+          <option value="Oceania">Oceania</option>
+          <option value="Middle East">Middle East</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="mic-box" for="hasMic">
+          <input type="checkbox" id="hasMic">
+          <span>I have a mic</span>
+        </label>
+      </div>
+      <button type="submit" class="btn join-btn" id="joinBtn">Join the Hunt!</button>
+    </form>
+    <p class="note">You get placed in an open squad from your region. When all 4 hunters are in, your squad picks its team name. Found the token? Mark it on your squad card and add a picture of your screen.</p>
+    <div class="status" id="joinStatus" role="status" aria-live="polite"></div>
+  </section>
+
+  <!-- ===== Squads list ===== -->
+  <section class="panel" aria-labelledby="squadsTitle">
+    <h2 id="squadsTitle"><span>All Squads</span><span class="count-pill" id="squadCount">Loading...</span></h2>
+    <div class="squad-tools">
+      <select class="select" id="filterRegion" aria-label="Filter by region">
+        <option value="">All regions</option>
+        <option>NA-West</option><option>NA-Central</option><option>NA-East</option><option>Europe</option>
+        <option>Brazil</option><option>Asia</option><option>Oceania</option><option>Middle East</option>
+      </select>
+      <select class="select" id="filterStatus" aria-label="Filter by status">
+        <option value="">Every squad</option>
+        <option value="found">Token Found!</option>
+        <option value="hunting">Still hunting</option>
+        <option value="recruiting">Needs hunters</option>
+      </select>
+    </div>
+    <div class="squads-list" id="squadsList">
+      <div class="empty-state">Loading squads...</div>
+    </div>
+  </section>
+</main>
+
+<footer>Fan-made squad finder for Fortnite players. Not affiliated with or endorsed by Epic Games.</footer>
+
+<svg class="waves" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+  <path d="M0 60 C 240 10 480 110 720 60 S 1200 10 1440 60 V120 H0 Z" fill="#0e3a63"/>
+  <path d="M0 85 C 240 45 480 125 720 85 S 1200 45 1440 85 V120 H0 Z" fill="#082543"/>
+</svg>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Token screenshot"><img alt="Token screenshot" id="lightboxImg"></div>
+
+<script>
+// =====================================================================
+//  SETTINGS - change these to update the countdown clocks
+//  Times are in UTC. Months are 0-based (0 = Jan, 10 = Nov, 11 = Dec).
+// =====================================================================
+
+// Token Leaves In: Dec 5, 2026 at 4:00 PM PST (item shop reset, Dec 6 00:00 UTC)
+var TOKEN_LEAVES_AT = Date.UTC(2026, 11, 6, 0, 0, 0);
+
+// Next Treasure Hour: Nov 21, 2026 at 5:00 PM PST (Nov 22 01:00 UTC)
+var TREASURE_HOUR_START = Date.UTC(2026, 10, 22, 1, 0, 0);
+var TREASURE_HOUR_LENGTH_MINUTES = 60;  // how long a Treasure Hour lasts
+var TREASURE_HOUR_REPEAT_HOURS = 24;    // repeats every 24 hours (set to 0 for one time only)
+
+// Where the shared squad list lives. Leave as is.
+var LIVE_SITE = "https://idyllic-dasik-c1dee5.netlify.app";
+
+// =====================================================================
+
+var API = (location.protocol === "http:" || location.protocol === "https:") ? "" : LIVE_SITE;
+var SQUAD_SIZE = 4;
+var squadsCache = [];
+var openTools = {};
+
+// ---------- Helpers ----------
+function $(id) { return document.getElementById(id); }
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+function pad(n) { return n < 10 ? "0" + n : String(n); }
+function myCrews() {
+  try { return JSON.parse(localStorage.getItem("ptth_crews") || "{}"); } catch (e) { return {}; }
+}
+function saveCrew(id, code) {
+  var crews = myCrews();
+  crews[id] = code;
+  try { localStorage.setItem("ptth_crews", JSON.stringify(crews)); } catch (e) {}
+}
+function forgetCrew(id) {
+  var crews = myCrews();
+  delete crews[id];
+  try { localStorage.setItem("ptth_crews", JSON.stringify(crews)); } catch (e) {}
+}
+function api(path, options) {
+  return fetch(API + path, options).then(function (res) {
+    return res.json().catch(function () { return {}; }).then(function (data) {
+      if (!res.ok) throw new Error(data.error || "Something went wrong. Try again.");
+      return data;
+    });
+  }, function () {
+    throw new Error("Could not reach the treasure map. Check your internet connection.");
+  });
+}
+
+// ---------- Countdown clocks ----------
+function formatLeft(ms) {
+  var t = Math.floor(ms / 1000);
+  var d = Math.floor(t / 86400);
+  var h = Math.floor((t % 86400) / 3600);
+  var m = Math.floor((t % 3600) / 60);
+  var s = t % 60;
+  return (d > 0 ? d + "d " : "") + pad(h) + ":" + pad(m) + ":" + pad(s);
+}
+function localWhen(ts) {
+  return new Date(ts).toLocaleString(undefined, { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+}
+function nextTreasure(now) {
+  var len = TREASURE_HOUR_LENGTH_MINUTES * 60000;
+  var start = TREASURE_HOUR_START;
+  if (TREASURE_HOUR_REPEAT_HOURS > 0 && now >= start + len) {
+    var every = TREASURE_HOUR_REPEAT_HOURS * 3600000;
+    start += Math.ceil((now - start - len + 1) / every) * every;
+  }
+  return { start: start, end: start + len };
+}
+function tick() {
+  var now = Date.now();
+  var leaves = $("leavesClock");
+  if (now < TOKEN_LEAVES_AT) {
+    leaves.textContent = formatLeft(TOKEN_LEAVES_AT - now);
+    leaves.className = "timer-clock";
+    $("leavesWhen").textContent = localWhen(TOKEN_LEAVES_AT);
+  } else {
+    leaves.textContent = "GONE!";
+    leaves.className = "timer-clock";
+    $("leavesWhen").textContent = "The token has left the shop";
+  }
+
+  var th = nextTreasure(now);
+  var tc = $("treasureClock");
+  if (now >= th.start && now < th.end) {
+    tc.textContent = "LIVE NOW!";
+    tc.className = "timer-clock live";
+    $("treasureWhen").textContent = "Ends in " + formatLeft(th.end - now);
+  } else if (now < th.start) {
+    tc.textContent = formatLeft(th.start - now);
+    tc.className = "timer-clock";
+    $("treasureWhen").textContent = localWhen(th.start);
+  } else {
+    tc.textContent = "OVER";
+    tc.className = "timer-clock";
+    $("treasureWhen").textContent = "Watch for the next one";
+  }
+}
+tick();
+setInterval(tick, 1000);
+
+// ---------- Add Me copy ----------
+$("copyBtn").addEventListener("click", function () {
+  var btn = this;
+  var done = function () { btn.textContent = "Copied!"; setTimeout(function () { btn.textContent = "Copy"; }, 1500); };
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText("FamiliarTray621").then(done, function () { fallbackCopy(); done(); });
+  } else { fallbackCopy(); done(); }
+});
+function fallbackCopy() {
+  var ta = document.createElement("textarea");
+  ta.value = "FamiliarTray621";
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand("copy"); } catch (e) {}
+  document.body.removeChild(ta);
+}
+
+// ---------- Sign up ----------
+$("joinForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  var status = $("joinStatus");
+  var btn = $("joinBtn");
+  var username = $("username").value.trim();
+  var region = $("region").value;
+  status.className = "status";
+  status.textContent = "";
+  if (username.length < 3) { status.className = "status err"; status.textContent = "Type your Fortnite username first."; return; }
+  if (!region) { status.className = "status err"; status.textContent = "Pick the region you live in."; return; }
+
+  btn.disabled = true;
+  btn.textContent = "Setting sail...";
+  api("/api/join", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: username, region: region, hasMic: $("hasMic").checked })
+  }).then(function (data) {
+    saveCrew(data.squadId, data.crewCode);
+    status.className = "status ok";
+    status.innerHTML = "Welcome aboard, " + esc(username) + "! You joined squad #" + data.squadId +
+      ". Your crew code is <span class=\"crew-code\">" + esc(data.crewCode) + "</span> - share it with your squad so they can update your team on their own device.";
+    $("joinForm").reset();
+    return loadSquads().then(function () {
+      var card = document.querySelector('[data-squad="' + data.squadId + '"]');
+      if (card) { card.scrollIntoView({ behavior: "smooth", block: "center" }); card.classList.add("flash"); }
+    });
+  }).catch(function (err) {
+    status.className = "status err";
+    status.textContent = err.message;
+  }).then(function () {
+    btn.disabled = false;
+    btn.textContent = "Join the Hunt!";
+  });
+});
+
+// ---------- Squads list ----------
+function loadSquads() {
+  return api("/api/squads").then(function (data) {
+    SQUAD_SIZE = data.squadSize || 4;
+    squadsCache = data.squads || [];
+    renderSquads();
+  }).catch(function (err) {
+    if (!squadsCache.length) $("squadsList").innerHTML = '<div class="empty-state">' + esc(err.message) + "</div>";
+  });
+}
+
+function isBusy() {
+  var a = document.activeElement;
+  return a && a.closest && a.closest(".crew-tools") && (a.tagName === "INPUT" || a.tagName === "BUTTON");
+}
+
+function renderSquads() {
+  var crews = myCrews();
+  var region = $("filterRegion").value;
+  var status = $("filterStatus").value;
+  var found = squadsCache.filter(function (s) { return s.tokenFound; }).length;
+  $("squadCount").textContent = squadsCache.length + (squadsCache.length === 1 ? " squad" : " squads") + " - " + found + " found";
+
+  var list = squadsCache.filter(function (s) {
+    if (region && s.region !== region) return false;
+    if (status === "found" && !s.tokenFound) return false;
+    if (status === "hunting" && s.tokenFound) return false;
+    if (status === "recruiting" && s.members.length >= SQUAD_SIZE) return false;
+    return true;
+  });
+  // Your squads first, then found squads, then newest
+  list.sort(function (a, b) {
+    var am = crews[a.id] ? 1 : 0, bm = crews[b.id] ? 1 : 0;
+    if (am !== bm) return bm - am;
+    if (a.tokenFound !== b.tokenFound) return a.tokenFound ? -1 : 1;
+    return b.id - a.id;
+  });
+
+  if (!list.length) {
+    $("squadsList").innerHTML = '<div class="empty-state">' +
+      (squadsCache.length ? "No squads match that filter." : "No squads yet. Sign up and be the first hunter!") + "</div>";
+    return;
+  }
+  $("squadsList").innerHTML = list.map(function (s) { return squadCard(s, crews[s.id]); }).join("");
+}
+
+function squadCard(s, code) {
+  var full = s.members.length >= SQUAD_SIZE;
+  var cls = "squad-card" + (s.tokenFound ? " found" : "") + (code ? " mine" : "");
+  var name = s.name ? '<h3 class="squad-name">' + esc(s.name) + "</h3>"
+                    : '<h3 class="squad-name unnamed">Unnamed Crew #' + s.id + "</h3>";
+  var badge = code ? '<span class="badge you">Your squad</span>'
+            : full ? '<span class="badge full">Squad full</span>'
+            : '<span class="badge recruiting">' + (SQUAD_SIZE - s.members.length) + " spot" + (SQUAD_SIZE - s.members.length === 1 ? "" : "s") + " open</span>";
+
+  var html = '<article class="' + cls + '" data-squad="' + s.id + '">' +
+    '<div class="squad-head"><div>' + name + '<div class="squad-meta">' + esc(s.region) + " &middot; " + s.members.length + "/" + SQUAD_SIZE + " hunters</div></div>" + badge + "</div>";
+
+  if (s.tokenFound) {
+    html += '<div class="found-banner"><svg><use href="#pirateToken"/></svg><div>Token Found!' +
+      (s.foundAt ? "<small>" + esc(new Date(s.foundAt).toLocaleString()) + "</small>" : "") + "</div></div>";
+    if (s.proofUrl) {
+      html += '<button type="button" class="proof" data-proof="' + esc(API + s.proofUrl) + '"><img loading="lazy" alt="Screenshot of the token found by ' + esc(s.name || "this squad") + '" src="' + esc(API + s.proofUrl) + '"></button>';
+    }
+  }
+
+  html += '<ul class="members">';
+  s.members.forEach(function (m) {
+    html += '<li class="member"><span class="who">' + esc(m.username) + "</span>" +
+      (m.hasMic ? '<span class="mic yes">Mic</span>' : '<span class="mic no">No mic</span>') + "</li>";
+  });
+  for (var i = s.members.length; i < SQUAD_SIZE; i++) html += '<li class="member open">Open spot - sign up to join</li>';
+  html += "</ul>";
+
+  if (code) {
+    html += crewTools(s, full);
+  } else if (openTools[s.id]) {
+    html += '<div class="crew-tools"><span class="label">On this squad? Enter your crew code</span>' +
+      '<div class="row"><input class="input" data-unlock-input="' + s.id + '" maxlength="12" placeholder="Crew code">' +
+      '<button type="button" class="btn" data-unlock="' + s.id + '">Unlock</button></div>' +
+      '<div class="mini-msg" data-msg="' + s.id + '"></div></div>';
+  } else {
+    html += '<button type="button" class="link-btn" data-show-unlock="' + s.id + '">On this squad? Update it</button>';
+  }
+  return html + "</article>";
+}
+
+function crewTools(s, full) {
+  var html = '<div class="crew-tools">';
+  if (full) {
+    html += '<span class="label">' + (s.name ? "Change team name" : "Your squad is formed! Pick a team name") + "</span>" +
+      '<div class="row"><input class="input" data-name-input="' + s.id + '" maxlength="40" placeholder="Team name" value="' + esc(s.name || "") + '">' +
+      '<button type="button" class="btn" data-save-name="' + s.id + '">Save</button></div>';
+  } else {
+    html += '<div class="hint">Your team name unlocks once all ' + SQUAD_SIZE + " hunters have joined.</div>";
+  }
+  html += '<span class="label">' + (s.tokenFound ? "Update your token picture" : "Found the token?") + "</span>" +
+    '<label class="file-pick">Add a picture of your screen with the token<input type="file" accept="image/*" data-file="' + s.id + '"></label>' +
+    '<img class="preview" data-preview="' + s.id + '" alt="" hidden>' +
+    '<button type="button" class="btn found-btn" data-found="' + s.id + '">' + (s.tokenFound ? "Update Picture" : "Token Found!") + "</button>" +
+    '<div class="mini-msg" data-msg="' + s.id + '"></div>' +
+    '<div class="hint">Crew code: <span class="crew-code">' + esc(myCrews()[s.id]) + "</span> &middot; " +
+    '<button type="button" class="link-btn" style="margin:0" data-forget="' + s.id + '">Hide on this device</button></div>' +
+    "</div>";
+  return html;
+}
+
+function msg(id, text, ok) {
+  var el = document.querySelector('[data-msg="' + id + '"]');
+  if (el) { el.className = "mini-msg " + (ok ? "ok" : "err"); el.textContent = text; }
+}
+
+// Shrink big screenshots before uploading so they send quickly
+function shrinkImage(file) {
+  return new Promise(function (resolve) {
+    if (!/^image\/(png|jpeg|webp)$/.test(file.type)) return resolve(file);
+    var img = new Image();
+    var url = URL.createObjectURL(file);
+    img.onload = function () {
+      var max = 1600;
+      var scale = Math.min(1, max / Math.max(img.width, img.height));
+      if (scale === 1 && file.size < 1500000) { URL.revokeObjectURL(url); return resolve(file); }
+      var c = document.createElement("canvas");
+      c.width = Math.round(img.width * scale);
+      c.height = Math.round(img.height * scale);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      c.toBlob(function (blob) { resolve(blob ? new File([blob], "token.jpg", { type: "image/jpeg" }) : file); }, "image/jpeg", 0.86);
+    };
+    img.onerror = function () { URL.revokeObjectURL(url); resolve(file); };
+    img.src = url;
+  });
+}
+
+document.addEventListener("click", function (e) {
+  var t = e.target.closest("button");
+  if (!t) return;
+
+  if (t.dataset.proof) {
+    $("lightboxImg").src = t.dataset.proof;
+    $("lightbox").classList.add("open");
+    return;
+  }
+  if (t.dataset.showUnlock) {
+    openTools[t.dataset.showUnlock] = true;
+    renderSquads();
+    var inp = document.querySelector('[data-unlock-input="' + t.dataset.showUnlock + '"]');
+    if (inp) inp.focus();
+    return;
+  }
+  if (t.dataset.unlock) {
+    var id = t.dataset.unlock;
+    var code = document.querySelector('[data-unlock-input="' + id + '"]').value.trim().toUpperCase();
+    if (!code) return msg(id, "Type your crew code.");
+    t.disabled = true;
+    api("/api/squads/" + id + "/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ crewCode: code })
+    }).then(function () {
+      saveCrew(id, code);
+      delete openTools[id];
+      renderSquads();
+      msg(id, "Unlocked! You can update this squad from this device now.", true);
+    }).catch(function (err) { t.disabled = false; msg(id, err.message); });
+    return;
+  }
+  if (t.dataset.forget) {
+    forgetCrew(t.dataset.forget);
+    renderSquads();
+    return;
+  }
+  if (t.dataset.saveName) {
+    var sid = t.dataset.saveName;
+    var name = document.querySelector('[data-name-input="' + sid + '"]').value.trim();
+    if (name.length < 2) return msg(sid, "Team name must be at least 2 characters.");
+    t.disabled = true;
+    api("/api/squads/" + sid + "/name", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ crewCode: myCrews()[sid], name: name })
+    }).then(function () {
+      return loadSquads().then(function () { msg(sid, "Team name saved!", true); });
+    }).catch(function (err) { t.disabled = false; msg(sid, err.message); });
+    return;
+  }
+  if (t.dataset.found) {
+    var fid = t.dataset.found;
+    var input = document.querySelector('[data-file="' + fid + '"]');
+    var file = input && input.files[0];
+    if (!file) return msg(fid, "Add a picture of your screen with the token first.");
+    t.disabled = true;
+    t.textContent = "Uploading...";
+    shrinkImage(file).then(function (img) {
+      var fd = new FormData();
+      fd.append("crewCode", myCrews()[fid] || "");
+      fd.append("screenshot", img, img.name || "token.jpg");
+      return api("/api/squads/" + fid + "/found", { method: "POST", body: fd });
+    }).then(function () {
+      return loadSquads().then(function () {
+        msg(fid, "Token Found! Your squad profile is updated.", true);
+        var card = document.querySelector('[data-squad="' + fid + '"]');
+        if (card) card.classList.add("flash");
+      });
+    }).catch(function (err) {
+      t.disabled = false;
+      t.textContent = "Token Found!";
+      msg(fid, err.message);
+    });
+  }
+});
+
+document.addEventListener("change", function (e) {
+  var id = e.target.dataset && e.target.dataset.file;
+  if (!id) return;
+  var file = e.target.files[0];
+  var prev = document.querySelector('[data-preview="' + id + '"]');
+  if (file && prev) { prev.src = URL.createObjectURL(file); prev.hidden = false; }
+});
+
+$("lightbox").addEventListener("click", function () { this.classList.remove("open"); });
+document.addEventListener("keydown", function (e) { if (e.key === "Escape") $("lightbox").classList.remove("open"); });
+$("filterRegion").addEventListener("change", renderSquads);
+$("filterStatus").addEventListener("change", renderSquads);
+
+loadSquads();
+// Refresh the list every 20 seconds (skipped while you are typing in a squad card)
+setInterval(function () {
+  var hasFile = Array.prototype.some.call(document.querySelectorAll("[data-file]"), function (i) { return i.files.length; });
+  if (!isBusy() && !hasFile && !document.hidden) loadSquads();
+}, 20000);
+</script>
+</body>
+</html>
